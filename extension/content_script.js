@@ -38,15 +38,12 @@ function getBusinessDaysOfCurrentMonth() {
   return days;
 }
 
-function fillApontamento(days) {
+async function fillApontamento(days) {
   const list = Array.isArray(days) ? days : getBusinessDaysOfCurrentMonth();
   if (!Array.isArray(list) || list.length === 0) return;
 
   console.log('Dias úteis do mês:', list);
-  const firstDay = list[0];
-  if (!firstDay) return;
 
-  const formatted = firstDay.split('-').reverse().join('/');
   const dateField = document.getElementById(
     "ctl00_MainContent_ControleApontamento_txtDataApontamento"
   );
@@ -64,28 +61,38 @@ function fillApontamento(days) {
     "ctl00_MainContent_ControleApontamento_BotaoSalvar"
   );
 
-  if (dateField) {
+  if (!dateField) {
+    console.warn("Campo de data não encontrado");
+    return;
+  }
+  if (!effortField) {
+    console.warn("Campo de esforço não encontrado");
+    return;
+  }
+  if (!statusField) {
+    console.warn("Campo de status não encontrado");
+    return;
+  }
+  if (!saveButton) {
+    console.warn("Botão Salvar não encontrado");
+    return;
+  }
+
+  for (const isoDay of list) {
+    const formatted = isoDay.split('-').reverse().join('/');
+
     dateField.value = formatted;
     dateField.dispatchEvent(new Event("change", { bubbles: true }));
-  } else {
-    console.warn("Campo de data não encontrado");
-  }
-  if (effortField) {
+
     effortField.value = "08:00";
     effortField.dispatchEvent(new Event("change", { bubbles: true }));
-  } else {
-    console.warn("Campo de esforço não encontrado");
-  }
-  if (statusField) {
+
     statusField.value = "99";
     statusField.dispatchEvent(new Event("change", { bubbles: true }));
-  } else {
-    console.warn("Campo de status não encontrado");
-  }
-  if (saveButton) {
+
     saveButton.click();
-  } else {
-    console.warn("Botão Salvar não encontrado");
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 }
 
@@ -100,7 +107,7 @@ function insertFillButton() {
   const btn = document.createElement('button');
   btn.id = 'fillDateBtn';
   btn.type = 'button';
-  btn.textContent = 'Preencher Data';
+  btn.textContent = 'Preencher mês';
   btn.addEventListener('click', () => fillApontamento());
 
   dateField.parentNode.appendChild(btn);
