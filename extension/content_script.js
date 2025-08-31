@@ -14,6 +14,13 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
+function formatISODate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function getBusinessDaysOfCurrentMonth() {
   const today = new Date();
   const year = today.getFullYear();
@@ -24,7 +31,7 @@ function getBusinessDaysOfCurrentMonth() {
   while (date.getMonth() === month) {
     const day = date.getDay();
     if (day >= 1 && day <= 5) {
-      days.push(date.toISOString().split('T')[0]);
+      days.push(formatISODate(date));
     }
     date.setDate(date.getDate() + 1);
   }
@@ -41,26 +48,36 @@ function fillApontamento(days) {
 
   const formatted = firstDay.split('-').reverse().join('/');
   const dateField = document.getElementById(
-    'ctl00_MainContent_ControleApontamento_txtDataApontamento'
+    "ctl00_MainContent_ControleApontamento_txtDataApontamento"
   );
-  const effortField = document.getElementById(
-    'ctl00_MainContent_ControleApontamento_CaixaEsforço'
-  );
+  const effortField =
+    document.getElementById(
+      "ctl00_MainContent_ControleApontamento_CaixaEsforço"
+    ) ||
+    document.getElementById(
+      "ctl00_MainContent_ControleApontamento_CaixaEsforco"
+    );
   const statusField = document.getElementById(
-    'ctl00_MainContent_ControleApontamento_CaixaStatus'
+    "ctl00_MainContent_ControleApontamento_CaixaStatus"
   );
 
   if (dateField) {
     dateField.value = formatted;
-    dateField.dispatchEvent(new Event('change', { bubbles: true }));
+    dateField.dispatchEvent(new Event("change", { bubbles: true }));
+  } else {
+    console.warn("Campo de data não encontrado");
   }
   if (effortField) {
-    effortField.value = '08:00';
-    effortField.dispatchEvent(new Event('change', { bubbles: true }));
+    effortField.value = "08:00";
+    effortField.dispatchEvent(new Event("change", { bubbles: true }));
+  } else {
+    console.warn("Campo de esforço não encontrado");
   }
   if (statusField) {
-    statusField.value = '99';
-    statusField.dispatchEvent(new Event('change', { bubbles: true }));
+    statusField.value = "99";
+    statusField.dispatchEvent(new Event("change", { bubbles: true }));
+  } else {
+    console.warn("Campo de status não encontrado");
   }
 }
 

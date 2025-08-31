@@ -1,3 +1,10 @@
+function formatISODate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 function getBusinessDaysOfCurrentMonth() {
   const today = new Date();
   const year = today.getFullYear();
@@ -8,7 +15,7 @@ function getBusinessDaysOfCurrentMonth() {
   while (date.getMonth() === month) {
     const day = date.getDay();
     if (day >= 1 && day <= 5) {
-      days.push(date.toISOString().split('T')[0]);
+      days.push(formatISODate(date));
     }
     date.setDate(date.getDate() + 1);
   }

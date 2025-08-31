@@ -13,4 +13,6 @@ A extensão injeta um script na página para auxiliar no preenchimento automáti
 - Ao clicar em "Listar dias úteis do mês", as datas de segunda a sexta do mês corrente são exibidas no console da página.
 - Ao clicar em "Cadastrar Data" (no popup) ou "Preencher Data" (na página), a extensão calcula os dias úteis do mês, envia a lista à página e insere a primeira data útil no campo de data, além de preencher automaticamente os campos de esforço (`08:00`) e status (`99`). O campo "Data" (`txtDataApontamento`) recebe a data no formato `dd/mm/aaaa`.
 
+- O cálculo das datas considera o fuso horário local e o script tenta localizar os campos de esforço e status mesmo que os IDs variem (ex.: `CaixaEsforco`).
+
 Se a aba ativa não estiver na página de Apontamento, uma mensagem de erro será registrada no console.
