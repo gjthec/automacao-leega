@@ -18,9 +18,20 @@ function getBusinessDaysOfCurrentMonth() {
 document.getElementById('businessDaysBtn').addEventListener('click', () => {
   const businessDays = getBusinessDaysOfCurrentMonth();
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, {
-      type: 'LOG_BUSINESS_DAYS',
-      payload: businessDays,
-    });
+    chrome.tabs.sendMessage(
+      tabs[0].id,
+      {
+        type: 'LOG_BUSINESS_DAYS',
+        payload: businessDays,
+      },
+      () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            'Conteúdo não disponível na aba atual:',
+            chrome.runtime.lastError.message
+          );
+        }
+      }
+    );
   });
 });

@@ -9,3 +9,4 @@ O diretório `extension` contém uma extensão de navegador (manifesto v3) direc
 3. Clique em **Carregar sem empacotar** e selecione a pasta `extension`.
 
 A extensão injeta um script na página para auxiliar no preenchimento automático do campo de data e oferece um **popup** com o botão "Listar dias úteis do mês". Ao clicar neste botão, as datas de segunda a sexta do mês corrente são exibidas no console da página.
+Se a aba ativa não estiver na página de Apontamento, uma mensagem de erro será registrada no console.
