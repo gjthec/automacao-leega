@@ -15,23 +15,20 @@ function getBusinessDaysOfCurrentMonth() {
   return days;
 }
 
-document.getElementById('businessDaysBtn').addEventListener('click', () => {
+document.getElementById('businessDaysBtn').addEventListener('click', async () => {
   const businessDays = getBusinessDaysOfCurrentMonth();
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(
-      tabs[0].id,
-      {
-        type: 'LOG_BUSINESS_DAYS',
-        payload: businessDays,
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          console.error(
-            'Conteúdo não disponível na aba atual:',
-            chrome.runtime.lastError.message
-          );
-        }
-      }
-    );
-  });
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab?.id) {
+      console.error('Nenhuma aba ativa encontrada');
+      return;
+    }
+
+    await chrome.tabs.sendMessage(tab.id, {
+      type: 'LOG_BUSINESS_DAYS',
+      payload: businessDays,
+    });
+  } catch (err) {
+    console.error('Conteúdo não disponível na aba atual:', err.message);
+  }
 });
