@@ -60,6 +60,9 @@ function fillApontamento(days) {
   const statusField = document.getElementById(
     "ctl00_MainContent_ControleApontamento_CaixaStatus"
   );
+  const saveButton = document.getElementById(
+    "ctl00_MainContent_ControleApontamento_BotaoSalvar"
+  );
 
   if (dateField) {
     dateField.value = formatted;
@@ -78,6 +81,11 @@ function fillApontamento(days) {
     statusField.dispatchEvent(new Event("change", { bubbles: true }));
   } else {
     console.warn("Campo de status não encontrado");
+  }
+  if (saveButton) {
+    saveButton.click();
+  } else {
+    console.warn("Botão Salvar não encontrado");
   }
 }
 
