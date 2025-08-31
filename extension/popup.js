@@ -17,6 +17,8 @@ function getBusinessDaysOfCurrentMonth() {
 
 document.getElementById('businessDaysBtn').addEventListener('click', async () => {
   const businessDays = getBusinessDaysOfCurrentMonth();
+  const firstDay = businessDays[0];
+
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab?.id) {
@@ -25,8 +27,8 @@ document.getElementById('businessDaysBtn').addEventListener('click', async () =>
     }
 
     await chrome.tabs.sendMessage(tab.id, {
-      type: 'LOG_BUSINESS_DAYS',
-      payload: businessDays,
+      type: 'FILL_APONTAMENTO_DATE',
+      payload: { firstDay, days: businessDays },
     });
   } catch (err) {
     console.error('Conteúdo não disponível na aba atual:', err.message);

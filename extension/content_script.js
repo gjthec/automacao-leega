@@ -1,10 +1,13 @@
 console.log("Extensão carregada na página de Apontamento da Leega");
 
 chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.type === 'LOG_BUSINESS_DAYS') {
-    console.log('Dias úteis do mês:', msg.payload);
+  if (msg.type === 'FILL_APONTAMENTO_DATE') {
+    const { firstDay, days } = msg.payload || {};
 
-    const firstDay = msg.payload && msg.payload[0];
+    if (Array.isArray(days)) {
+      console.log('Dias úteis do mês:', days);
+    }
+
     if (firstDay) {
       const formatted = firstDay.split('-').reverse().join('/');
       const dateField = document.getElementById(
@@ -17,9 +20,18 @@ chrome.runtime.onMessage.addListener((msg) => {
         'ctl00_MainContent_ControleApontamento_CaixaStatus'
       );
 
-      if (dateField) dateField.value = formatted;
-      if (effortField) effortField.value = '08:00';
-      if (statusField) statusField.value = '99';
+      if (dateField) {
+        dateField.value = formatted;
+        dateField.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (effortField) {
+        effortField.value = '08:00';
+        effortField.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (statusField) {
+        statusField.value = '99';
+        statusField.dispatchEvent(new Event('change', { bubbles: true }));
+      }
     }
   }
 });
