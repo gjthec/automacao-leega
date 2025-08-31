@@ -11,6 +11,6 @@ O diretório `extension` contém uma extensão de navegador (manifesto v3) direc
 A extensão injeta um script na página para auxiliar no preenchimento automático. Ela oferece um **popup** com os botões "Listar dias úteis do mês" e "Cadastrar Data" e, na própria página de Apontamento, um botão "Preencher Data" ao lado do campo de data.
 
 - Ao clicar em "Listar dias úteis do mês", as datas de segunda a sexta do mês corrente são exibidas no console da página.
-- Ao clicar em "Cadastrar Data" (no popup) ou "Preencher Data" (na página), a primeira data útil do mês é inserida no campo de data e os campos de esforço (`08:00`) e status (`99`) são preenchidos automaticamente. O campo "Data" (`txtDataApontamento`) recebe a data no formato `dd/mm/aaaa`.
+- Ao clicar em "Cadastrar Data" (no popup) ou "Preencher Data" (na página), a extensão calcula os dias úteis do mês, envia a lista à página e insere a primeira data útil no campo de data, além de preencher automaticamente os campos de esforço (`08:00`) e status (`99`). O campo "Data" (`txtDataApontamento`) recebe a data no formato `dd/mm/aaaa`.
 
 Se a aba ativa não estiver na página de Apontamento, uma mensagem de erro será registrada no console.

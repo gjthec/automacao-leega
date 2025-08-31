@@ -37,6 +37,8 @@ document.getElementById('businessDaysBtn').addEventListener('click', async () =>
 document
   .getElementById('fillDatePopupBtn')
   .addEventListener('click', async () => {
+    const businessDays = getBusinessDaysOfCurrentMonth();
+
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tab?.id) {
@@ -44,7 +46,10 @@ document
         return;
       }
 
-      await chrome.tabs.sendMessage(tab.id, { type: 'FILL_APONTAMENTO_DATE' });
+      await chrome.tabs.sendMessage(tab.id, {
+        type: 'FILL_APONTAMENTO_DATE',
+        payload: { days: businessDays },
+      });
     } catch (err) {
       console.error('Conteúdo não disponível na aba atual:', err.message);
     }

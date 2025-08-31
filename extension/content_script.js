@@ -9,7 +9,8 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 
   if (msg.type === 'FILL_APONTAMENTO_DATE') {
-    fillApontamento();
+    const { days } = msg.payload || {};
+    fillApontamento(days);
   }
 });
 
@@ -30,10 +31,12 @@ function getBusinessDaysOfCurrentMonth() {
   return days;
 }
 
-function fillApontamento() {
-  const days = getBusinessDaysOfCurrentMonth();
-  console.log('Dias úteis do mês:', days);
-  const firstDay = days[0];
+function fillApontamento(days) {
+  const list = Array.isArray(days) ? days : getBusinessDaysOfCurrentMonth();
+  if (!Array.isArray(list) || list.length === 0) return;
+
+  console.log('Dias úteis do mês:', list);
+  const firstDay = list[0];
   if (!firstDay) return;
 
   const formatted = firstDay.split('-').reverse().join('/');
@@ -73,7 +76,7 @@ function insertFillButton() {
   btn.id = 'fillDateBtn';
   btn.type = 'button';
   btn.textContent = 'Preencher Data';
-  btn.addEventListener('click', fillApontamento);
+  btn.addEventListener('click', () => fillApontamento());
 
   dateField.parentNode.appendChild(btn);
 }
