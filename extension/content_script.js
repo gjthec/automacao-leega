@@ -44,56 +44,48 @@ async function fillApontamento(days) {
 
   console.log('Dias úteis do mês:', list);
 
-  const dateField = document.getElementById(
-    "ctl00_MainContent_ControleApontamento_txtDataApontamento"
-  );
-  const effortField =
-    document.getElementById(
-      "ctl00_MainContent_ControleApontamento_CaixaEsforço"
-    ) ||
-    document.getElementById(
-      "ctl00_MainContent_ControleApontamento_CaixaEsforco"
-    );
-  const statusField = document.getElementById(
-    "ctl00_MainContent_ControleApontamento_CaixaStatus"
-  );
-  const saveButton = document.getElementById(
-    "ctl00_MainContent_ControleApontamento_BotaoSalvar"
-  );
-
-  if (!dateField) {
-    console.warn("Campo de data não encontrado");
-    return;
-  }
-  if (!effortField) {
-    console.warn("Campo de esforço não encontrado");
-    return;
-  }
-  if (!statusField) {
-    console.warn("Campo de status não encontrado");
-    return;
-  }
-  if (!saveButton) {
-    console.warn("Botão Salvar não encontrado");
-    return;
-  }
-
   for (const isoDay of list) {
     const formatted = isoDay.split('-').reverse().join('/');
 
+    const dateField = await waitForElement(
+      'ctl00_MainContent_ControleApontamento_txtDataApontamento'
+    );
+    const effortField =
+      (await waitForElement(
+        'ctl00_MainContent_ControleApontamento_CaixaEsforço'
+      )) ||
+      (await waitForElement(
+        'ctl00_MainContent_ControleApontamento_CaixaEsforco'
+      ));
+    const statusField = await waitForElement(
+      'ctl00_MainContent_ControleApontamento_CaixaStatus'
+    );
+    const saveButton = await waitForElement(
+      'ctl00_MainContent_ControleApontamento_BotaoSalvar'
+    );
+
+    if (!dateField || !effortField || !statusField || !saveButton) {
+      console.warn('Algum campo não foi encontrado, interrompendo');
+      return;
+    }
+
     dateField.value = formatted;
-    dateField.dispatchEvent(new Event("change", { bubbles: true }));
-
-    effortField.value = "08:00";
-    effortField.dispatchEvent(new Event("change", { bubbles: true }));
-
-    statusField.value = "99";
-    statusField.dispatchEvent(new Event("change", { bubbles: true }));
-
+    effortField.value = '08:00';
+    statusField.value = '99';
     saveButton.click();
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
+}
+
+async function waitForElement(id, timeout = 5000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    const el = document.getElementById(id);
+    if (el) return el;
+    await new Promise((r) => setTimeout(r, 100));
+  }
+  return null;
 }
 
 function insertFillButton() {
