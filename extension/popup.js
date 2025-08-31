@@ -17,7 +17,6 @@ function getBusinessDaysOfCurrentMonth() {
 
 document.getElementById('businessDaysBtn').addEventListener('click', async () => {
   const businessDays = getBusinessDaysOfCurrentMonth();
-  const firstDay = businessDays[0];
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -27,10 +26,26 @@ document.getElementById('businessDaysBtn').addEventListener('click', async () =>
     }
 
     await chrome.tabs.sendMessage(tab.id, {
-      type: 'FILL_APONTAMENTO_DATE',
-      payload: { firstDay, days: businessDays },
+      type: 'LIST_BUSINESS_DAYS',
+      payload: { days: businessDays },
     });
   } catch (err) {
     console.error('Conteúdo não disponível na aba atual:', err.message);
   }
 });
+
+document
+  .getElementById('fillDatePopupBtn')
+  .addEventListener('click', async () => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab?.id) {
+        console.error('Nenhuma aba ativa encontrada');
+        return;
+      }
+
+      await chrome.tabs.sendMessage(tab.id, { type: 'FILL_APONTAMENTO_DATE' });
+    } catch (err) {
+      console.error('Conteúdo não disponível na aba atual:', err.message);
+    }
+  });
