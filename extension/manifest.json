@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Automacao Apontamento Leega",
+  "version": "1.0",
+  "description": "Extensão para auxiliar no site de Apontamento da Leega",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://discovery.leega.com.br/Apontamento.aspx*"],
+      "js": ["content_script.js"]
+    }
+  ],
+  "permissions": ["storage", "tabs"]
+}
