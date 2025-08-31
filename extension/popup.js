@@ -15,9 +15,7 @@ function getBusinessDaysOfCurrentMonth() {
   return days;
 }
 
-document.getElementById('businessDaysBtn').addEventListener('click', async () => {
-  const businessDays = getBusinessDaysOfCurrentMonth();
-
+async function sendMessageToActiveTab(message) {
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab?.id) {
@@ -25,32 +23,31 @@ document.getElementById('businessDaysBtn').addEventListener('click', async () =>
       return;
     }
 
-    await chrome.tabs.sendMessage(tab.id, {
-      type: 'LIST_BUSINESS_DAYS',
-      payload: { days: businessDays },
+    chrome.tabs.sendMessage(tab.id, message, () => {
+      if (chrome.runtime.lastError) {
+        console.error(
+          'Conteúdo não disponível na aba atual:',
+          chrome.runtime.lastError.message
+        );
+      }
     });
   } catch (err) {
-    console.error('Conteúdo não disponível na aba atual:', err.message);
+    console.error('Erro ao comunicar com a aba:', err.message);
   }
+}
+
+document.getElementById('businessDaysBtn').addEventListener('click', () => {
+  const businessDays = getBusinessDaysOfCurrentMonth();
+  sendMessageToActiveTab({
+    type: 'LIST_BUSINESS_DAYS',
+    payload: { days: businessDays },
+  });
 });
 
-document
-  .getElementById('fillDatePopupBtn')
-  .addEventListener('click', async () => {
-    const businessDays = getBusinessDaysOfCurrentMonth();
-
-    try {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab?.id) {
-        console.error('Nenhuma aba ativa encontrada');
-        return;
-      }
-
-      await chrome.tabs.sendMessage(tab.id, {
-        type: 'FILL_APONTAMENTO_DATE',
-        payload: { days: businessDays },
-      });
-    } catch (err) {
-      console.error('Conteúdo não disponível na aba atual:', err.message);
-    }
+document.getElementById('fillDatePopupBtn').addEventListener('click', () => {
+  const businessDays = getBusinessDaysOfCurrentMonth();
+  sendMessageToActiveTab({
+    type: 'FILL_APONTAMENTO_DATE',
+    payload: { days: businessDays },
   });
+});
