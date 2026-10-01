@@ -5,10 +5,7 @@ function formatISODate(date) {
   return `${y}-${m}-${d}`;
 }
 
-function getBusinessDaysOfCurrentMonth() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth(); // 0-indexed
+function getBusinessDaysOfMonth(year, month) {
   const date = new Date(year, month, 1);
   const days = [];
 
@@ -20,6 +17,18 @@ function getBusinessDaysOfCurrentMonth() {
     date.setDate(date.getDate() + 1);
   }
   return days;
+}
+
+function getBusinessDaysOfCurrentMonth() {
+  const today = new Date();
+  return getBusinessDaysOfMonth(today.getFullYear(), today.getMonth());
+}
+
+function getBusinessDaysOfLastMonth() {
+  const today = new Date();
+  // Dia 0 do mês atual = último dia do mês anterior (ajusta ano em janeiro)
+  const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+  return getBusinessDaysOfMonth(lastMonth.getFullYear(), lastMonth.getMonth());
 }
 
 async function sendMessageToActiveTab(message) {
@@ -53,6 +62,14 @@ document.getElementById('businessDaysBtn').addEventListener('click', () => {
 
 document.getElementById('fillDatePopupBtn').addEventListener('click', () => {
   const businessDays = getBusinessDaysOfCurrentMonth();
+  sendMessageToActiveTab({
+    type: 'FILL_APONTAMENTO_DATE',
+    payload: { days: businessDays },
+  });
+});
+
+document.getElementById('lastMonthBtn').addEventListener('click', () => {
+  const businessDays = getBusinessDaysOfLastMonth();
   sendMessageToActiveTab({
     type: 'FILL_APONTAMENTO_DATE',
     payload: { days: businessDays },
